@@ -1,4 +1,3 @@
-const { NSFW } = require('../../build/Release/nsfw.node');
 const fse = require('fs-extra');
 const path = require('path');
 const _isInteger = require('lodash.isinteger');
@@ -6,12 +5,18 @@ const _isUndefined = require('lodash.isundefined');
 
 const _private = {};
 
-function nsfw() {
-  if (!(this instanceof nsfw)) {
-    return _private.buildNSFW(...arguments);
+function nsfw(watchPath, eventCallback, options, modulePath) {
+  if (!modulePath) {
+    modulePath = '../../build/Release/nsfw.node';
   }
 
-  const _nsfw = new NSFW(...arguments);
+  const { NSFW } = require(modulePath);
+
+  if (!(this instanceof nsfw)) {
+    return _private.buildNSFW(watchPath, eventCallback, options);
+  }
+
+  const _nsfw = new NSFW(watchPath, eventCallback, options);
 
   this.start = function start() {
     return new Promise((resolve, reject) => {
