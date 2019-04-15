@@ -49,11 +49,8 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Configuring node-gyp
-          command: npx node-gyp configure
-      - run:
           name: Building with node-gyp
-          command: npx node-gyp build
+          command: npx node-gyp configure && npx node-gyp build
       - store_artifacts:
           path: build/Release/nsfw.node
       - persist_to_workspace:
