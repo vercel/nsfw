@@ -59,7 +59,7 @@ jobs:
       - checkout
       - run:
           name: Installing apt dependencies
-          command: apt add --no-cache -y ca-certificates
+          command: apk add --no-cache ca-certificates
       - attach_workspace:
           at: .
       - run:
