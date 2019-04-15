@@ -50,7 +50,7 @@ jobs:
           at: .
       - run:
           name: Building with node-gyp
-          command: npx node-gyp configure && npx node-gyp build
+          command: yarn global add node-gyp && node-gyp configure && node-gyp build
       - store_artifacts:
           path: build/Release/nsfw.node
       - persist_to_workspace:
