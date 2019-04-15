@@ -167,7 +167,19 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - build:
+      - build-linux:
+          requires:
+            - install
+          filters:
+            tags:
+              only: /.*/
+      - build-alpine:
+          requires:
+            - install
+          filters:
+            tags:
+              only: /.*/
+      - build-macos:
           requires:
             - install
           filters:
