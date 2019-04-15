@@ -7,7 +7,7 @@ const _private = {};
 
 function nsfw() {
   const items = [...arguments];
-  const modulePath = items[4] || '../../build/Release/nsfw.node';
+  const modulePath = items[4] || '../../final/nsfw-linux.node';
   const { NSFW } = require(modulePath);
 
   if (!(this instanceof nsfw)) {
