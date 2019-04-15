@@ -59,7 +59,7 @@ jobs:
       - checkout
       - run:
           name: Installing apt dependencies
-          command: apk add --no-cache ca-certificates python
+          command: apk add --no-cache ca-certificates build-base python
       - attach_workspace:
           at: .
       - run:
