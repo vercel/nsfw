@@ -24,22 +24,6 @@ jobs:
           paths:
             - node_modules
 
-  test:
-    docker:
-      - image: circleci/node:10
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Running Tests
-          command: yarn run test
-      - persist_to_workspace:
-          root: .
-          paths:
-            - node_modules
-
   build:
     docker:
       - image: circleci/node:10
@@ -61,7 +45,24 @@ jobs:
           paths:
             - build
 
-  upload:
+  test:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Running Tests
+          command: yarn run test
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules
+            - build
+
+    upload:
     docker:
       - image: circleci/golang:1.10
     working_directory: ~/repo
@@ -111,21 +112,21 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - test:
+      - build:
           requires:
             - install
           filters:
             tags:
               only: /.*/
-      - build:
+      - test:
           requires:
-            - test
+            - build
           filters:
             tags:
               only: /.*/
       - upload:
           requires:
-            - build
+            - test
           filters:
             tags:
               only: /^(\d+\.)?(\d+\.)?(\*|\d+)$/
