@@ -3,7 +3,7 @@ jobs:
 
   install:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:10.4.1
     working_directory: ~/repo
     steps:
       - checkout
@@ -26,7 +26,7 @@ jobs:
 
   build:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:10.4.1
     working_directory: ~/repo
     steps:
       - checkout
@@ -47,7 +47,7 @@ jobs:
 
   test:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:10.4.1
     working_directory: ~/repo
     steps:
       - checkout
@@ -91,7 +91,7 @@ jobs:
 
   publish:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:10.4.1
     working_directory: ~/repo
     steps:
       - checkout
