@@ -24,7 +24,7 @@ jobs:
           paths:
             - node_modules
 
-  build:
+  build-linux:
     docker:
       - image: circleci/node:10.15.3
     working_directory: ~/repo
@@ -38,12 +38,72 @@ jobs:
       - run:
           name: Building with node-gyp
           command: node-gyp configure && node-gyp build
+      - run:
+          name: Create Final Directory
+          command: mkdir ./final
+      - run:
+          name: Rename File
+          command: mv ./build/Release/nsfw.node ./final/nsfw-linux.node
       - store_artifacts:
-          path: build/Release/nsfw.node
+          path: final/nsfw-linux.node
       - persist_to_workspace:
           root: .
           paths:
-            - build
+            - final/nsfw-linux.node
+
+  build-alpine:
+    docker:
+      - image: mhart/alpine-node:10.15.3
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Installing node-gyp
+          command: sudo npm install -g node-gyp
+      - run:
+          name: Building with node-gyp
+          command: node-gyp configure && node-gyp build
+      - run:
+          name: Create Final Directory
+          command: mkdir ./final
+      - run:
+          name: Rename File
+          command: mv ./build/Release/nsfw.node ./final/nsfw-alpine.node
+      - store_artifacts:
+          path: final/nsfw-alpine.node
+      - persist_to_workspace:
+          root: .
+          paths:
+            - final/nsfw-alpine.node
+
+  build-macos:
+    macos:
+      xcode: '10.2.0'
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Installing node-gyp
+          command: sudo npm install -g node-gyp
+      - run:
+          name: Building with node-gyp
+          command: node-gyp configure && node-gyp build
+      - run:
+          name: Create Final Directory
+          command: mkdir ./final
+      - run:
+          name: Rename File
+          command: mv ./build/Release/nsfw.node ./final/nsfw-macos.node
+      - store_artifacts:
+          path: final/nsfw-macos.node
+      - persist_to_workspace:
+          root: .
+          paths:
+            - final/nsfw-macos.node
 
   test:
     docker:
@@ -56,11 +116,6 @@ jobs:
       - run:
           name: Running Tests
           command: yarn run test
-      - persist_to_workspace:
-          root: .
-          paths:
-            - node_modules
-            - build
 
   upload:
     docker:
@@ -80,7 +135,7 @@ jobs:
           name: Uploading Binaries
           command:
             >-
-              for file in ./build/Release/*.node;
+              for file in ./final/*.node;
               do
                github-release upload -R -t `git describe --tags` -n ${file##*/} -f $file
               done
@@ -120,7 +175,9 @@ workflows:
               only: /.*/
       - test:
           requires:
-            - build
+            - build-linux
+            - build-alpine
+            - build-macos
           filters:
             tags:
               only: /.*/
