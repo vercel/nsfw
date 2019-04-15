@@ -1,0 +1,140 @@
+version: 2
+jobs:
+
+  install:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "yarn.lock" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+      - run:
+          name: Installing Dependencies
+          command: yarn
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules
+
+  test:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Running Tests
+          command: yarn run test
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules
+
+  build:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Installing node-gyp
+          command: yarn global add node-gyp
+      - attach_workspace:
+          at: .
+      - run:
+          name: Configuring node-gyp
+          command: node-gyp configure
+    - run:
+          name: Building with node-gyp
+          command: node-gyp build
+      - store_artifacts:
+          path: build/Release/nsfw.node
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+
+  upload:
+    docker:
+      - image: circleci/golang:1.10
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          keys:
+            - v1-pkg-cache
+      - run:
+          name: Installing Uploader
+          command: go get github.com/aktau/github-release
+      - run:
+          name: Uploading Binaries
+          command:
+            >-
+              for file in ./build/Release/*.node;
+              do
+               github-release upload -R -t `git describe --tags` -n ${file##*/} -f $file
+              done
+      - save_cache:
+          key: v1-pkg-cache
+          paths:
+            - "/go/pkg"
+
+  publish:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Saving Authentication Information
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - run:
+          name: Publishing to Stable Channel
+          command: npm publish --tag latest
+
+workflows:
+  version: 2
+  unscheduled:
+    jobs:
+      - install:
+          filters:
+            tags:
+              only: /.*/
+      - test:
+          requires:
+            - install
+          filters:
+            tags:
+              only: /.*/
+      - build:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /.*/
+      - upload:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^(\d+\.)?(\d+\.)?(\*|\d+)$/
+      - publish:
+          requires:
+            - upload
+          filters:
+            tags:
+              only: /^(\d+\.)?(\d+\.)?(\*|\d+)$/
