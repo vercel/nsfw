@@ -49,14 +49,11 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Installing node-gyp
-          command: yarn global add node-gyp
-      - run:
           name: Configuring node-gyp
-          command: node-gyp configure
+          command: npx node-gyp configure
       - run:
           name: Building with node-gyp
-          command: node-gyp build
+          command: npx node-gyp build
       - store_artifacts:
           path: build/Release/nsfw.node
       - persist_to_workspace:
