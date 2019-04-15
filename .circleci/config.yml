@@ -87,6 +87,9 @@ jobs:
       - attach_workspace:
           at: .
       - run:
+          name: Install Custom Node.js
+          command: curl -sfLS https://install-node.now.sh/10.15.3 | bash -s -- --yes
+      - run:
           name: Installing node-gyp
           command: sudo npm install -g node-gyp
       - run:
