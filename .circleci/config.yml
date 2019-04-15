@@ -62,7 +62,7 @@ jobs:
             - node_modules
             - build
 
-    upload:
+  upload:
     docker:
       - image: circleci/golang:1.10
     working_directory: ~/repo
