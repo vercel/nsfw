@@ -54,7 +54,7 @@ jobs:
       - run:
           name: Configuring node-gyp
           command: node-gyp configure
-    - run:
+      - run:
           name: Building with node-gyp
           command: node-gyp build
       - store_artifacts:
