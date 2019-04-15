@@ -21,9 +21,7 @@
   },
   "files": [
     "lib",
-    "src",
-    "includes",
-    "binding.gyp"
+    "src"
   ],
   "homepage": "https://github.com/axosoft/node-simple-file-watcher",
   "dependencies": {
