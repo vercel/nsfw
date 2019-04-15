@@ -361,6 +361,57 @@ describe('Node Sentinel File Watcher', function() {
   });
 
   describe('Recursive', function() {
+    it('can listen for the creation of a deeply nested file', function(done) {
+      const paths = ['d', 'e', 'e', 'p', 'f', 'o', 'l', 'd', 'e', 'r'];
+      const file = 'a_file.txt';
+      let foundFileCreateEvent = false;
+
+      function findEvent(element) {
+        if (
+          element.action === nsfw.actions.CREATED &&
+          element.directory === path.join(workDir, ...paths) &&
+          element.file === file
+        ) {
+          foundFileCreateEvent = true;
+        }
+      }
+
+      let watch;
+
+      let directory = workDir;
+
+      return nsfw(
+        workDir,
+        events => events.forEach(findEvent),
+        { debounceMS: DEBOUNCE }
+      )
+        .then(_w => {
+          watch = _w;
+          return watch.start();
+        })
+        .then(() => new Promise(resolve => {
+          setTimeout(resolve, TIMEOUT_PER_STEP);
+        }))
+        .then(() => {
+          return paths.reduce((chain, dir) => {
+            directory = path.join(directory, dir);
+            const nextDirectory = directory;
+            return chain.then(() => fse.mkdir(nextDirectory));
+          }, Promise.resolve());
+        })
+        .then(() => fse.open(path.join(directory, file), 'w'))
+        .then(fd => fse.close(fd))
+        .then(() => new Promise(resolve => {
+          setTimeout(resolve, TIMEOUT_PER_STEP);
+        }))
+        .then(() => {
+          expect(foundFileCreateEvent).toBe(true);
+          return watch.stop();
+        })
+        .then(done, () =>
+          watch.stop().then((err) => done.fail(err)));
+    });
+
     it('can listen for the destruction of a directory and its subtree', function(done) {
       const inPath = path.resolve(workDir, 'test4');
       let deletionCount = 0;
