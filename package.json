@@ -10,6 +10,9 @@
     "debug-test": "npm run eslint && npm run compile && node-debug --debug-brk jasmine-node lib/spec",
     "test": "npm run eslint && npm run compile && jasmine-node lib/spec --verbose"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/axosoft/node-simple-file-watcher.git"
