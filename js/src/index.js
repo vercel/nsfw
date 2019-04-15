@@ -5,18 +5,16 @@ const _isUndefined = require('lodash.isundefined');
 
 const _private = {};
 
-function nsfw(watchPath, eventCallback, options, modulePath) {
-  if (!modulePath) {
-    modulePath = '../../build/Release/nsfw.node';
-  }
-
+function nsfw() {
+  const items = [...arguments];
+  const modulePath = items[4] || '../../build/Release/nsfw.node';
   const { NSFW } = require(modulePath);
 
   if (!(this instanceof nsfw)) {
-    return _private.buildNSFW(watchPath, eventCallback, options);
+    return _private.buildNSFW(...items);
   }
 
-  const _nsfw = new NSFW(watchPath, eventCallback, options);
+  const _nsfw = new NSFW(...items);
 
   this.start = function start() {
     return new Promise((resolve, reject) => {
