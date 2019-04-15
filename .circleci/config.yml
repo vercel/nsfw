@@ -46,11 +46,11 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: Installing node-gyp
           command: yarn global add node-gyp
-      - attach_workspace:
-          at: .
       - run:
           name: Configuring node-gyp
           command: node-gyp configure
