@@ -1,4 +1,4 @@
-declare function nsfw(
+export default function nsfw(
   dir: string,
   callback: nsfw.EventsCallback,
   options?: nsfw.WatcherOptions,
@@ -45,8 +45,4 @@ declare namespace nsfw {
     MODIFIED,
     RENAMED
   };
-}
-
-declare module '@zeit/nsfw' {
-  export = nsfw;
 }
