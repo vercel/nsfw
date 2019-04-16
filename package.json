@@ -5,9 +5,9 @@
   "main": "lib/src/index.js",
   "scripts": {
     "compile": "babel --sourceMaps --presets es2015 -d ./lib/spec ./js/spec && babel --sourceMaps --presets es2015 -d ./lib/src ./js/src",
-    "prepublish": "babel --presets es2015 -d ./lib/src ./js/src",
+    "prepublish": "babel --presets es2015 -d ./lib/src ./js/src && cp ./js/src/index.d.ts ./lib/src/index.d.ts",
     "debug-test": "npm run eslint && npm run compile && node-debug --debug-brk jasmine-node lib/spec",
-    "prepare-unit": "rm -rf final && mkdir final && node-gyp configure && node-gyp build && mv ./build/Release/nsfw.node ./final/nsfw-linux.node",
+    "prepare-unit": "node-gyp configure && node-gyp build",
     "test": "npm run test-lint && npm run test-unit",
     "test-unit": "npm run prepare-unit && npm run compile && jasmine-node lib/spec --verbose",
     "test-lint": "eslint js/src js/spec"

@@ -4,19 +4,15 @@ const _isInteger = require('lodash.isinteger');
 const _isUndefined = require('lodash.isundefined');
 
 const _private = {};
-const defaultPath = '../../final/nsfw-linux.node';
+const defaultPath = '../../build/Release/nsfw.node';
 
 function nsfw() {
-  const items = [...arguments];
-  const lastItem = items[items.length - 1];
-  const modulePath = typeof lastItem === 'string' ? lastItem : defaultPath;
-  const { NSFW } = require(modulePath);
-
   if (!(this instanceof nsfw)) {
-    return _private.buildNSFW(...items);
+    return _private.buildNSFW(...arguments);
   }
 
-  const _nsfw = new NSFW(...items);
+  const { NSFW } = require(arguments[4]);
+  const _nsfw = new NSFW(...arguments);
 
   this.start = function start() {
     return new Promise((resolve, reject) => {
@@ -43,8 +39,8 @@ nsfw.actions = {
   RENAMED: 3
 };
 
-_private.buildNSFW = function buildNSFW(watchPath, eventCallback, options, modulePath) {
-  let { debounceMS, errorCallback } = options || {};
+_private.buildNSFW = function buildNSFW(watchPath, eventCallback, options) {
+  let { debounceMS, errorCallback, modulePath } = options || {};
 
   if (_isInteger(debounceMS)) {
     if (debounceMS < 1) {
@@ -60,6 +56,10 @@ _private.buildNSFW = function buildNSFW(watchPath, eventCallback, options, modul
     errorCallback = function(nsfwError) {
       throw nsfwError;
     };
+  }
+
+  if (_isUndefined(modulePath)) {
+    modulePath = defaultPath;
   }
 
   if (!path.isAbsolute(watchPath)) {
