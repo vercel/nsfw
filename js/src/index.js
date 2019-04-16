@@ -11,10 +11,7 @@ function nsfw() {
     return _private.buildNSFW(...arguments);
   }
 
-  const items = [...arguments];
-  const lastItem = items[items.length - 1];
-  const modulePath = typeof lastItem === 'string' ? lastItem : defaultPath;
-  const { NSFW } = require(modulePath);
+  const { NSFW } = require(arguments[4]);
   const _nsfw = new NSFW(...arguments);
 
   this.start = function start() {
@@ -59,6 +56,10 @@ _private.buildNSFW = function buildNSFW(watchPath, eventCallback, options) {
     errorCallback = function(nsfwError) {
       throw nsfwError;
     };
+  }
+
+  if (_isUndefined(modulePath)) {
+    modulePath = defaultPath;
   }
 
   if (!path.isAbsolute(watchPath)) {
