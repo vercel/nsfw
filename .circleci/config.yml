@@ -24,6 +24,18 @@ jobs:
           paths:
             - node_modules
 
+  test:
+    docker:
+      - image: circleci/node:10.15.3
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Running Tests
+          command: yarn run test
+
   build-linux:
     docker:
       - image: circleci/node:10.15.3
@@ -111,18 +123,6 @@ jobs:
           paths:
             - final/nsfw-macos.node
 
-  test:
-    docker:
-      - image: circleci/node:10.15.3
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Running Tests
-          command: yarn run test
-
   upload:
     docker:
       - image: circleci/golang:1.10
@@ -173,35 +173,35 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - build-linux:
+      - test:
           requires:
             - install
+          filters:
+            tags:
+              only: /.*/
+      - build-linux:
+          requires:
+            - test
           filters:
             tags:
               only: /.*/
       - build-alpine:
           requires:
-            - install
+            - test
           filters:
             tags:
               only: /.*/
       - build-macos:
           requires:
-            - install
-          filters:
-            tags:
-              only: /.*/
-      - test:
-          requires:
-            - build-linux
-            - build-alpine
-            - build-macos
+            - test
           filters:
             tags:
               only: /.*/
       - upload:
           requires:
-            - test
+            - build-linux
+            - build-macos
+            - build-alpine
           filters:
             tags:
               only: /^(\d+\.)?(\d+\.)?(\*|\d+)$/
