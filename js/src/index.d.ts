@@ -1,9 +1,8 @@
-export default function nsfw(
+declare function nsfw(
   dir: string,
   callback: nsfw.EventsCallback,
   options?: nsfw.WatcherOptions,
   errorCallback?: (errors: Error[]) => void,
-  modulePath?: string,
 ): Promise<nsfw.Watcher>;
 
 declare namespace nsfw {
@@ -38,6 +37,7 @@ declare namespace nsfw {
   export interface WatcherOptions {
     debouceMS?: number;
     errorCallback?(errors: Error[]);
+    modulePath?: string;
   };
   export enum actions {
     CREATED,
@@ -45,4 +45,8 @@ declare namespace nsfw {
     MODIFIED,
     RENAMED
   };
+}
+
+declare module '@zeit/nsfw' {
+  export = nsfw;
 }
