@@ -11,7 +11,7 @@ function nsfw() {
     return _private.buildNSFW(...arguments);
   }
 
-    console.log([...arguments]);
+  console.log([...arguments]);
   const _nsfw = new NSFW(...arguments);
 
   this.start = function start() {
