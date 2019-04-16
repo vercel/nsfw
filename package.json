@@ -8,6 +8,7 @@
     "eslint": "eslint js/src js/spec",
     "prepublish": "babel --presets es2015 -d ./lib/src ./js/src",
     "debug-test": "npm run eslint && npm run compile && node-debug --debug-brk jasmine-node lib/spec",
+    "prepare-test": "node-gyp configure && node-gyp build",
     "test": "npm run eslint && npm run compile && jasmine-node lib/spec --verbose"
   },
   "publishConfig": {
