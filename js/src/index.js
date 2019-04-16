@@ -1,17 +1,20 @@
-const { NSFW } = require('../../build/Release/nsfw.node');
 const fse = require('fs-extra');
 const path = require('path');
 const _isInteger = require('lodash.isinteger');
 const _isUndefined = require('lodash.isundefined');
 
 const _private = {};
+const defaultPath = '../../build/Release/nsfw.node';
 
 function nsfw() {
   if (!(this instanceof nsfw)) {
     return _private.buildNSFW(...arguments);
   }
 
-  console.log([...arguments]);
+  const items = [...arguments];
+  const lastItem = items[items.length - 1];
+  const modulePath = typeof lastItem === 'string' ? lastItem : defaultPath;
+  const { NSFW } = require(modulePath);
   const _nsfw = new NSFW(...arguments);
 
   this.start = function start() {
@@ -40,7 +43,7 @@ nsfw.actions = {
 };
 
 _private.buildNSFW = function buildNSFW(watchPath, eventCallback, options) {
-  let { debounceMS, errorCallback } = options || {};
+  let { debounceMS, errorCallback, modulePath } = options || {};
 
   if (_isInteger(debounceMS)) {
     if (debounceMS < 1) {
@@ -65,7 +68,7 @@ _private.buildNSFW = function buildNSFW(watchPath, eventCallback, options) {
   return fse.stat(watchPath)
     .then(stats => {
       if (stats.isDirectory()) {
-        return new nsfw(debounceMS, watchPath, eventCallback, errorCallback);
+        return new nsfw(debounceMS, watchPath, eventCallback, errorCallback, modulePath);
       } else if (stats.isFile()) {
         return new _private.nsfwFilePoller(debounceMS, watchPath, eventCallback);
       } else {
