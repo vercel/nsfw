@@ -5,10 +5,12 @@
   "main": "lib/src/index.js",
   "scripts": {
     "compile": "babel --sourceMaps --presets es2015 -d ./lib/spec ./js/spec && babel --sourceMaps --presets es2015 -d ./lib/src ./js/src",
-    "eslint": "eslint js/src js/spec",
     "prepublish": "babel --presets es2015 -d ./lib/src ./js/src",
     "debug-test": "npm run eslint && npm run compile && node-debug --debug-brk jasmine-node lib/spec",
-    "test": "npm run eslint && npm run compile && jasmine-node lib/spec --verbose"
+    "prepare-unit": "rm -rf final && mkdir final && node-gyp configure && node-gyp build && mv ./build/Release/nsfw.node ./final/nsfw-linux.node",
+    "test": "npm run test-lint && npm run test-unit",
+    "test-unit": "npm run prepare-unit && npm run compile && jasmine-node lib/spec --verbose",
+    "test-lint": "eslint js/src js/spec"
   },
   "publishConfig": {
     "access": "public"
