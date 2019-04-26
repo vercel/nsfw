@@ -49,7 +49,7 @@ jobs:
           command: curl -sL https://rpm.nodesource.com/setup_10.x | bash -
       - run:
           name: Install build tools
-          command: yum -y install gcc gcc-c++ kernel-devel
+          command: yum -y install gcc gcc-c++ kernel-devel make
       - run:
           name: Install Node.js
           command: yum -y install nodejs
