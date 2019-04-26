@@ -46,7 +46,7 @@ jobs:
           at: .
       - run:
           name: Upgrade packages
-          command: yum upgrade
+          command: sudo yum upgrade
       - run:
           name: Installing node-gyp
           command: npm install -g node-gyp
