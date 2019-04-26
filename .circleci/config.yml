@@ -49,7 +49,7 @@ jobs:
           command: curl -sL https://rpm.nodesource.com/setup_10.x | bash -
       - run:
           name: Install Node.js
-          command: yum install nodejs
+          command: yum -y install nodejs
       - run:
           name: Installing node-gyp
           command: npm install -g node-gyp
