@@ -6,4 +6,4 @@ ZEIT uses this system in [Now CLI](https://github.com/zeit/now-cli) for powering
 
 ---
 
-This project is **not maintained**, other than the fact that it is irregularly synced with the original.
+This project is **not maintained**, other than the fact that it is kept in sync with the original.
