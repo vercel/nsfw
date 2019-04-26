@@ -46,10 +46,10 @@ jobs:
           at: .
       - run:
           name: Prepare Node.js Source
-          command: curl -sL https://rpm.nodesource.com/setup_10.x | sudo bash -
+          command: curl -sL https://rpm.nodesource.com/setup_10.x | bash -
       - run:
           name: Install Node.js
-          command: sudo yum install nodejs
+          command: yum install nodejs
       - run:
           name: Installing node-gyp
           command: npm install -g node-gyp
