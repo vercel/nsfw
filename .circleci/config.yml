@@ -38,7 +38,7 @@ jobs:
 
   build-linux:
     docker:
-      - image: centos/7
+      - image: centos:7
     working_directory: ~/repo
     steps:
       - checkout
